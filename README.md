@@ -27,6 +27,10 @@ Every push to `main` builds and deploys the site with `.github/workflows/deploy.
 
 For a custom domain, set `site` in `astro.config.mjs` to the domain, remove `base`, and update the `Canonical` line in `public/.well-known/security.txt`.
 
+## Pull requests
+
+`.github/workflows/build.yml` builds the site on every pull request. To make it required (so auto-merge waits for it), add a branch ruleset for `main` under **Settings → Rules → Rulesets** with "Require status checks to pass" and the `build` check.
+
 ## Security
 
 The site ships no JavaScript, uses a strict Content-Security-Policy that only allows same-origin styles and images, loads no third-party fonts or analytics, and publishes a `security.txt`.
