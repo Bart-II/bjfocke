@@ -6,12 +6,12 @@ import ProjectCard from '../../components/ProjectCard.astro';
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 ---
 
-<Base title="Projects" description="Projects by Bart Fokke in information security, governance and software.">
-  <section class="prose">
-    <h1>Projects</h1>
+<Base title="Projects" description="Projects by Bart Fokke in information security, governance and software." section="projects">
+  <section class="panel">
+    <h1 class="plate-title">Projects</h1>
     <p>Work, study and personal projects.</p>
+    <div class="cards">
+      {projects.map((project) => <ProjectCard project={project} level={2} />)}
+    </div>
   </section>
-  <div class="cards">
-    {projects.map((project) => <ProjectCard project={project} />)}
-  </div>
 </Base>

@@ -96,16 +96,17 @@ export const skills: { group: string; items: string[] }[] = [
   { group: 'Ways of working', items: ['Scrum', 'LaTeX'] },
 ];
 
+// `meter` (0–100) sets the needle on the language meters.
 export const languages = [
-  { language: 'Dutch', level: 'Native' },
-  { language: 'English', level: 'Full professional' },
-  { language: 'German', level: 'Basic' },
-  { language: 'French', level: 'Basic' },
+  { language: 'Dutch', level: 'Native', meter: 100 },
+  { language: 'English', level: 'Full professional', meter: 85 },
+  { language: 'German', level: 'Basic', meter: 22 },
+  { language: 'French', level: 'Basic', meter: 22 },
 ];
 
 // TODO: replace these placeholders with your own interests.
 export const interests = [
+  { title: 'Nuclear energy', text: 'Reactors, the engineering behind them and the look of the old control rooms that inspired this site.' },
   { title: 'Economics & policy', text: 'How regulation and economic incentives shape security decisions.' },
-  { title: 'Interest placeholder', text: 'Describe something you enjoy outside of work or study.' },
   { title: 'Interest placeholder', text: 'Another hobby, sport or topic you follow.' },
 ];

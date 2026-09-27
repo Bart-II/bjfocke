@@ -1,0 +1,89 @@
+---
+// A multi-pen event recorder: every channel's pen steps up while that role or
+// study was running. Purely visual; the lists below it carry the same content.
+
+export interface Channel {
+  label: string;
+  period: string;
+}
+
+interface Props {
+  channels: Channel[];
+  caption: string;
+}
+
+const { channels, caption } = Astro.props;
+
+const months: Record<string, number> = {
+  jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
+};
+
+// Turns "Jul 2023" or "2024" into a fractional year. A bare year is read as an
+// academic year boundary: September when it starts a period, July when it ends one.
+function toYear(part: string, isEnd: boolean): number {
+  const [a, b] = part.trim().split(/\s+/);
+  if (b) return Number(b) + (months[a.slice(0, 3).toLowerCase()] + (isEnd ? 1 : 0)) / 12;
+  return Number(a) + (isEnd ? 7 : 8) / 12;
+}
+
+const spans = channels.map((c) => {
+  const [start, end] = c.period.split(/\s*[–-]\s*/);
+  return { ...c, from: toYear(start, false), to: toYear(end ?? start, true) };
+});
+
+const firstYear = Math.floor(Math.min(...spans.map((s) => s.from)));
+const lastYear = Math.ceil(Math.max(...spans.map((s) => s.to)));
+
+const width = 800;
+const left = 64;
+const right = 24;
+const top = 34;
+const lane = 34;
+const height = top + spans.length * lane + 22;
+const x = (year: number) => left + ((year - firstYear) / (lastYear - firstYear)) * (width - left - right);
+
+const years = Array.from({ length: lastYear - firstYear + 1 }, (_, i) => firstYear + i);
+const quarters = Array.from({ length: (lastYear - firstYear) * 4 + 1 }, (_, i) => firstYear + i / 4);
+const holes = Array.from({ length: Math.floor(width / 40) }, (_, i) => 20 + i * 40);
+
+const traces = spans.map((s, i) => {
+  const low = top + i * lane + lane - 8;
+  const high = low - 16;
+  return {
+    ...s,
+    channel: i + 1,
+    labelY: low - 4,
+    d: `M${left} ${low} H${x(s.from).toFixed(1)} V${high} H${x(s.to).toFixed(1)} V${low} H${width - right}`,
+  };
+});
+---
+
+<figure class="recorder">
+  <div class="recorder-window" tabindex="0" role="group" aria-label={caption}>
+    <svg viewBox={`0 0 ${width} ${height}`} aria-hidden="true" focusable="false">
+      <rect class="paper" width={width} height={height} />
+      {quarters.map((q) => (
+        <line class:list={['grid', { major: Number.isInteger(q) }]} x1={x(q)} x2={x(q)} y1="14" y2={height - 10} />
+      ))}
+      {traces.map((t) => (
+        <line class="grid" x1={left} x2={width - right} y1={t.labelY + 4} y2={t.labelY + 4} />
+      ))}
+      {years.map((y) => (
+        <text class="scale" x={x(y)} y="26">{y}</text>
+      ))}
+      {holes.map((h) => (
+        <>
+          <circle class="sprocket" cx={h} cy="6" r="2.6" />
+          <circle class="sprocket" cx={h} cy={height - 5} r="2.6" />
+        </>
+      ))}
+      {traces.map((t) => (
+        <>
+          <text class="channel" x="10" y={t.labelY}>CH{t.channel}</text>
+          <path class={`trace ink-${((t.channel - 1) % 4) + 1}`} d={t.d} />
+        </>
+      ))}
+    </svg>
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>
