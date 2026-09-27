@@ -1,10 +1,12 @@
 ---
 // A multi-pen event recorder: every channel's pen steps up while that role or
-// study was running. Purely visual; the lists below it carry the same content.
+// study was running. A rotary switch picks which pens are down on the paper.
+// Purely visual; the lists below it carry the same content.
 
 export interface Channel {
   label: string;
   period: string;
+  kind: 'work' | 'study';
 }
 
 interface Props {
@@ -26,64 +28,98 @@ function toYear(part: string, isEnd: boolean): number {
   return Number(a) + (isEnd ? 7 : 8) / 12;
 }
 
-const spans = channels.map((c) => {
+const spans = channels.map((c, i) => {
   const [start, end] = c.period.split(/\s*[–-]\s*/);
-  return { ...c, from: toYear(start, false), to: toYear(end ?? start, true) };
+  return { ...c, channel: i + 1, ink: (i % 4) + 1, from: toYear(start, false), to: toYear(end ?? start, true) };
 });
 
+const now = new Date();
+const nowYear = now.getFullYear() + now.getMonth() / 12;
 const firstYear = Math.floor(Math.min(...spans.map((s) => s.from)));
-const lastYear = Math.ceil(Math.max(...spans.map((s) => s.to)));
-
-const width = 800;
-const left = 64;
-const right = 24;
-const top = 34;
-const lane = 34;
-const height = top + spans.length * lane + 22;
-const x = (year: number) => left + ((year - firstYear) / (lastYear - firstYear)) * (width - left - right);
-
+const lastYear = Math.ceil(Math.max(nowYear, ...spans.map((s) => s.to)));
 const years = Array.from({ length: lastYear - firstYear + 1 }, (_, i) => firstYear + i);
 const quarters = Array.from({ length: (lastYear - firstYear) * 4 + 1 }, (_, i) => firstYear + i / 4);
-const holes = Array.from({ length: Math.floor(width / 40) }, (_, i) => 20 + i * 40);
 
-const traces = spans.map((s, i) => {
-  const low = top + i * lane + lane - 8;
-  const high = low - 16;
-  return {
-    ...s,
-    channel: i + 1,
-    labelY: low - 4,
-    d: `M${left} ${low} H${x(s.from).toFixed(1)} V${high} H${x(s.to).toFixed(1)} V${low} H${width - right}`,
-  };
-});
+// Two layouts: a wide one with the names in a column on the left, and a narrow
+// one for phones with each name written above its pen.
+function layout(width: number, left: number, lane: number, labelAbove: boolean) {
+  const right = 16;
+  const top = 36;
+  const height = top + spans.length * lane + 18;
+  const x = (year: number) => left + ((year - firstYear) / (lastYear - firstYear)) * (width - left - right);
+  const lanes = spans.map((s, i) => {
+    const low = top + (i + 1) * lane - 7;
+    const high = low - (labelAbove ? 13 : 16);
+    const x1 = x(s.from);
+    const x2 = x(s.to);
+    return {
+      ...s,
+      low,
+      high,
+      labelX: labelAbove ? left : 12,
+      labelY: labelAbove ? low - 17 : low - 4,
+      band: { x: x1, y: high, w: x2 - x1, h: low - high },
+      d: `M${left} ${low} H${x1.toFixed(1)} V${high} H${x2.toFixed(1)} V${low} H${width - right}`,
+    };
+  });
+  const holes = Array.from({ length: Math.floor(width / 36) }, (_, i) => 18 + i * 36);
+  return { width, left, right, height, x, lanes, holes, nowX: x(nowYear) };
+}
+
+const wide = layout(820, 150, 34, false);
+const narrow = layout(340, 10, 44, true);
+const layouts = [
+  { cls: 'rec-wide', ...wide, yearLabel: (y: number) => String(y) },
+  { cls: 'rec-narrow', ...narrow, yearLabel: (y: number) => `’${String(y).slice(2)}` },
+];
+
+const positions = [
+  { id: 'rec-all', label: 'All', value: 'all' },
+  { id: 'rec-work', label: 'Work', value: 'work' },
+  { id: 'rec-study', label: 'Study', value: 'study' },
+];
 ---
 
 <figure class="recorder">
+  <fieldset class="selector">
+    <legend>Pens</legend>
+    {positions.map((p, i) => (
+      <span class={`selector-pos pos-${p.value}`}>
+        <input type="radio" name="recorder-pens" id={p.id} value={p.value} checked={i === 0} />
+        <label for={p.id}>{p.label}</label>
+      </span>
+    ))}
+    <span class="selector-knob" aria-hidden="true"></span>
+  </fieldset>
   <div class="recorder-window" tabindex="0" role="group" aria-label={caption}>
-    <svg viewBox={`0 0 ${width} ${height}`} aria-hidden="true" focusable="false">
-      <rect class="paper" width={width} height={height} />
-      {quarters.map((q) => (
-        <line class:list={['grid', { major: Number.isInteger(q) }]} x1={x(q)} x2={x(q)} y1="14" y2={height - 10} />
-      ))}
-      {traces.map((t) => (
-        <line class="grid" x1={left} x2={width - right} y1={t.labelY + 4} y2={t.labelY + 4} />
-      ))}
-      {years.map((y) => (
-        <text class="scale" x={x(y)} y="26">{y}</text>
-      ))}
-      {holes.map((h) => (
-        <>
-          <circle class="sprocket" cx={h} cy="6" r="2.6" />
-          <circle class="sprocket" cx={h} cy={height - 5} r="2.6" />
-        </>
-      ))}
-      {traces.map((t) => (
-        <>
-          <text class="channel" x="10" y={t.labelY}>CH{t.channel}</text>
-          <path class={`trace ink-${((t.channel - 1) % 4) + 1}`} d={t.d} />
-        </>
-      ))}
-    </svg>
+    {layouts.map((l) => (
+      <svg class={l.cls} viewBox={`0 0 ${l.width} ${l.height}`} aria-hidden="true" focusable="false">
+        <rect class="paper" width={l.width} height={l.height} />
+        {quarters.map((q) => (
+          <line class:list={['grid', { major: Number.isInteger(q) }]} x1={l.x(q)} x2={l.x(q)} y1="14" y2={l.height - 10} />
+        ))}
+        {l.lanes.map((t) => (
+          <line class="grid" x1={l.left} x2={l.width - l.right} y1={t.low} y2={t.low} />
+        ))}
+        {years.map((y) => (
+          <text class="scale" x={l.x(y)} y="28">{l.yearLabel(y)}</text>
+        ))}
+        {l.holes.map((h) => (
+          <>
+            <circle class="sprocket" cx={h} cy="6" r="2.6" />
+            <circle class="sprocket" cx={h} cy={l.height - 5} r="2.6" />
+          </>
+        ))}
+        <line class="now" x1={l.nowX} x2={l.nowX} y1="32" y2={l.height - 12} />
+        {l.lanes.map((t) => (
+          <g class={`lane ${t.kind}`}>
+            <text class={`channel ink-${t.ink}`} x={t.labelX} y={t.labelY}>{t.label}</text>
+            <rect class={`band ink-${t.ink}`} x={t.band.x} y={t.band.y} width={t.band.w} height={t.band.h} />
+            <path class={`trace ink-${t.ink}`} d={t.d} />
+          </g>
+        ))}
+      </svg>
+    ))}
   </div>
   <figcaption>{caption}</figcaption>
 </figure>

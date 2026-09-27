@@ -1,11 +1,13 @@
 ---
+import '@fontsource/barlow-condensed/latin-500.css';
+import '@fontsource/barlow-condensed/latin-700.css';
 import '../styles/global.css';
 import { profile } from '../data/resume';
 
 interface Props {
   title?: string;
   description?: string;
-  /** Which position the rotary selector in the header points at. */
+  /** Which lamp in the header navigation is lit. */
   section?: 'overview' | 'experience' | 'projects' | 'interests' | 'contact';
 }
 
@@ -25,7 +27,7 @@ const csp = [
   "form-action 'none'",
 ].join('; ');
 
-// Positions of the rotary mode selector, left to right.
+// Header navigation, left to right.
 const positions = [
   { id: 'overview', label: 'Overview', href: `${base}/` },
   { id: 'experience', label: 'Experience', href: `${base}/#experience` },
@@ -54,16 +56,14 @@ const positions = [
           <span class="brand-name">{profile.name}</span>
           <span class="brand-unit">Unit 1 · Main control board</span>
         </a>
-        <nav class="rotary" aria-label="Main" data-pos={section}>
-          <span class="rotary-caption" aria-hidden="true">Mode select</span>
+        <nav class="mode-lamps" aria-label="Main">
           <ul>
             {positions.map((p) => (
-              <li class={`pos-${p.id}`}>
+              <li>
                 <a href={p.href} aria-current={p.id === section ? 'page' : undefined}>{p.label}</a>
               </li>
             ))}
           </ul>
-          <span class="knob" aria-hidden="true"></span>
         </nav>
       </div>
     </header>

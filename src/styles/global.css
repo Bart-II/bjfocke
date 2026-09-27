@@ -1,28 +1,30 @@
 /*
- * Theme: a 1960s–70s reactor main control board. Sea-green steel panels,
- * engraved black legend plates, annunciator windows, pushbuttons, a rotary
- * mode selector, edgewise meters and a strip-chart recorder.
+ * Theme: a 1960s–70s reactor main control board. A sea-green steel board
+ * with cream enamel instrument bays in black bezels, engraved legend plates,
+ * lamps, round pushbuttons, a rotary selector, edgewise meters and a
+ * strip-chart recorder.
  */
 
 :root {
-  --cabinet: #29332f;
-  --cabinet-edge: #151b18;
-  --panel: #b5c8bb;
-  --panel-hi: #c7d7cb;
-  --panel-lo: #8aa192;
-  --module: #a9bdaf;
-  --module-hi: #bccdc1;
-  --ink: #111a15;
-  --ink-muted: #33443b;
-  --link: #0b3354;
-  --plate: #151615;
-  --plate-text: #f1f0e8;
-  --paper: #f4f0e3;
-  --grid-minor: #bdd5c3;
-  --grid-major: #7fae8e;
+  --wall: #6e8e7d;
+  --wall-dark: #54715f;
+  --seam: rgb(0 0 0 / 0.16);
+  --bay: #ece6d3;
+  --bay-hi: #f4efe2;
+  --bezel: #1c1e1b;
+  --module: #e1d9c2;
+  --module-edge: #b8ae95;
+  --ink: #1b1c18;
+  --ink-muted: #4f4c42;
+  --link: #0e3a5a;
+  --plate: #161715;
+  --plate-text: #f1efe6;
+  --paper: #f8f4e7;
+  --grid-minor: #c3d9c8;
+  --grid-major: #84b193;
   --grid-text: #2f5e40;
-  --mimic-bg: #9fb5a7;
-  --mimic-vessel: #c9d6cd;
+  --mimic-bg: #7d9c8b;
+  --mimic-vessel: #ece6d3;
   --lamp-white: #fff3c4;
   --lamp-amber: #ffc24a;
   --lamp-green: #5ee37f;
@@ -33,30 +35,29 @@
   --ink-3: #6b2d8f;
   --ink-4: #1d6b3a;
   --focus: #0b3a8f;
-  --footer-text: #c6d1ca;
-  --font-label: 'Bahnschrift', 'DIN Alternate', 'DIN 2014', 'Arial Narrow', 'Helvetica Neue', Arial, sans-serif;
+  --screw: #d9d6cc 0 2px, #6b6a63 2.6px, transparent 3.2px;
+  --font-label: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Courier New', monospace;
-  --screw: #d6dad4 0 2px, #6b716c 2.6px, transparent 3.2px;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --cabinet: #121715;
-    --cabinet-edge: #070908;
-    --panel: #33423a;
-    --panel-hi: #3b4b42;
-    --panel-lo: #1f2924;
-    --module: #2b3831;
-    --module-hi: #33413a;
-    --ink: #e2ebe5;
-    --ink-muted: #aebfb4;
+    --wall: #1f2b25;
+    --wall-dark: #18221d;
+    --seam: rgb(0 0 0 / 0.3);
+    --bay: #2b312c;
+    --bay-hi: #323933;
+    --bezel: #0c0d0c;
+    --module: #353c36;
+    --module-edge: #4b544c;
+    --ink: #ece6d3;
+    --ink-muted: #bbb5a2;
     --link: #a6d4ff;
-    --mimic-bg: #26312b;
-    --mimic-vessel: #43524a;
+    --mimic-bg: #2c3a33;
+    --mimic-vessel: #4a554e;
     --focus: #ffd24a;
-    --footer-text: #a9b6ae;
-    --screw: #8d938e 0 2px, #3a403c 2.6px, transparent 3.2px;
+    --screw: #7d7b74 0 2px, #33332f 2.6px, transparent 3.2px;
     color-scheme: dark;
   }
 }
@@ -69,13 +70,16 @@
 
 html {
   scroll-behavior: smooth;
-  background: var(--cabinet-edge);
+  background: var(--wall);
 }
 
+/* The board: sea-green steel, divided into sections by vertical seams. */
 body {
   margin: 0;
-  background: linear-gradient(var(--cabinet), var(--cabinet-edge) 60rem);
   min-height: 100vh;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 calc(25vw - 2px), var(--seam) calc(25vw - 2px) 25vw),
+    var(--wall);
   color: var(--ink);
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.6;
@@ -101,9 +105,18 @@ h3 {
 }
 
 .container {
-  max-width: 62rem;
+  max-width: 64rem;
   margin: 0 auto;
   padding: 0 1rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .skip-link {
@@ -120,9 +133,8 @@ h3 {
   top: 1rem;
 }
 
-/* Screws in the corners of a panel, layered over its fill. */
+/* Screws in the corners, layered over the fill. */
 .panel,
-.site-header,
 .plate {
   --corner: 10px;
   background-image:
@@ -143,30 +155,27 @@ h3 {
   color: var(--plate-text);
   background-color: var(--plate);
   border-radius: 3px;
-  box-shadow:
-    inset 0 0 0 1px #3c3e3b,
-    0 1px 0 rgb(255 255 255 / 0.35);
+  box-shadow: inset 0 0 0 1px #3c3e3b;
 }
 
 .panel > h2,
 .plate-title {
   display: inline-block;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 700;
   padding: 0.4rem 1rem;
   margin: 0 0 1.4rem;
 }
 
 .plate-title {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
 }
 
-/* Header: brand plate and rotary mode selector */
+/* Header: brand plate and a row of lamps for navigation */
 .site-header {
-  --fill-top: var(--panel-hi);
-  --fill-bottom: var(--panel);
-  border-bottom: 4px solid var(--cabinet-edge);
-  box-shadow: 0 6px 16px rgb(0 0 0 / 0.35);
+  background: var(--wall-dark);
+  border-bottom: 3px solid var(--bezel);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.3);
 }
 
 .header-inner {
@@ -179,234 +188,118 @@ h3 {
 }
 
 .brand {
-  --fill-top: #202220;
+  --fill-top: #222421;
   --fill-bottom: #0e0f0e;
   --corner: 8px;
   --screw: #9a9e98 0 1.6px, #4a4d49 2.1px, transparent 2.6px;
   display: flex;
   flex-direction: column;
-  padding: 0.7rem 1.6rem;
+  padding: 0.6rem 1.5rem;
   text-decoration: none;
 }
 
 .brand-name {
-  font-size: 1.35rem;
+  font-size: 1.5rem;
   font-weight: 700;
 }
 
 .brand-unit {
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   letter-spacing: 0.18em;
   color: #c9c9bf;
 }
 
-.rotary {
-  --dial: 3.4rem;
-  --reach: 6.8rem;
-  --cx: 8rem;
-  position: relative;
-  width: 24rem;
-  height: 12rem;
-}
-
-.rotary-caption {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  translate: -50% 0;
-  font-family: var(--font-label);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ink-muted);
-  white-space: nowrap;
-}
-
-/* Dial plate with five index ticks, one per position. */
-.rotary::before,
-.rotary::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: var(--cx);
-  translate: -50% -50%;
-  border-radius: 50%;
-}
-
-.rotary::before {
-  width: 6rem;
-  height: 6rem;
-  background: radial-gradient(circle, #2c302d 0 60%, #1a1c1a 61%);
-  box-shadow: 0 2px 0 rgb(255 255 255 / 0.3), inset 0 2px 6px rgb(0 0 0 / 0.6);
-}
-
-.rotary::after {
-  width: 6rem;
-  height: 6rem;
-  background: conic-gradient(
-    var(--plate-text) 0deg 2deg,
-    transparent 2deg 43deg,
-    var(--plate-text) 43deg 47deg,
-    transparent 47deg 88deg,
-    var(--plate-text) 88deg 92deg,
-    transparent 92deg 268deg,
-    var(--plate-text) 268deg 272deg,
-    transparent 272deg 313deg,
-    var(--plate-text) 313deg 317deg,
-    transparent 317deg 358deg,
-    var(--plate-text) 358deg
-  );
-  mask: radial-gradient(circle closest-side, transparent 0 80%, #000 81% 97%, transparent 98%);
-}
-
-.rotary ul {
+.mode-lamps ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 0.9rem;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.rotary li {
-  --angle: 0deg;
-  position: absolute;
-  left: 50%;
-  top: var(--cx);
-  transform: translate(-50%, -50%) rotate(var(--angle)) translateY(calc(-1 * var(--reach))) rotate(calc(-1 * var(--angle)));
-}
-
-.rotary .pos-overview { --angle: -90deg; }
-.rotary .pos-experience { --angle: -45deg; }
-.rotary .pos-projects { --angle: 0deg; }
-.rotary .pos-interests { --angle: 45deg; }
-.rotary .pos-contact { --angle: 90deg; }
-
-.rotary a {
-  display: block;
+/* Each link is an indicator lamp above its legend plate; the current page is lit. */
+.mode-lamps a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.55rem 0.3rem;
   font-family: var(--font-label);
-  font-size: 0.74rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   text-decoration: none;
-  white-space: nowrap;
   color: var(--plate-text);
   background: var(--plate);
-  border-radius: 2px;
-  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
   box-shadow: inset 0 0 0 1px #3c3e3b;
 }
 
-.rotary a[aria-current='page'] {
-  color: #2b1800;
-  background: var(--lamp-amber);
-  box-shadow: 0 0 10px rgb(255 194 74 / 0.8);
+.mode-lamps a::before {
+  content: '';
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  border: 3px solid #2b2d2a;
+  background: radial-gradient(circle at 35% 35%, #9a9c95, #50534e 70%);
+  box-shadow: 0 0 0 2px #8f948d;
 }
 
-.rotary a:hover {
+.mode-lamps a:hover {
   text-decoration: underline;
 }
 
-/* Chicken-head knob; its pointer turns to the current position or the one under the cursor. */
-.knob {
-  --turn: 0deg;
-  position: absolute;
-  left: 50%;
-  top: var(--cx);
-  width: var(--dial);
-  height: var(--dial);
-  translate: -50% -50%;
-  rotate: var(--turn);
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, #4a4d4a, #0c0d0c 70%);
-  box-shadow: 0 4px 8px rgb(0 0 0 / 0.6);
-  transition: rotate 0.25s ease;
-  pointer-events: none;
+.mode-lamps a:hover::before {
+  background: radial-gradient(circle at 35% 35%, #fff6d6, #d6b25a 70%);
 }
 
-.knob::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: -1rem;
-  width: 1.3rem;
-  height: calc(var(--dial) + 2rem);
-  translate: -50% 0;
-  border-radius: 0.75rem 0.75rem 45% 45%;
-  background: linear-gradient(90deg, #111 0%, #3b3e3b 45%, #111 100%);
-  box-shadow: 0 3px 6px rgb(0 0 0 / 0.5);
+.mode-lamps a[aria-current='page']::before {
+  background: radial-gradient(circle at 35% 35%, #fffbe8, var(--lamp-amber) 60%);
+  box-shadow: 0 0 0 2px #8f948d, 0 0 12px 3px rgb(255 194 74 / 0.8);
 }
 
-.knob::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: -0.8rem;
-  width: 3px;
-  height: 2.4rem;
-  translate: -50% 0;
-  background: #f4f1e6;
-  border-radius: 2px;
-}
-
-.rotary[data-pos='overview'] .knob { --turn: -90deg; }
-.rotary[data-pos='experience'] .knob { --turn: -45deg; }
-.rotary[data-pos='projects'] .knob { --turn: 0deg; }
-.rotary[data-pos='interests'] .knob { --turn: 45deg; }
-.rotary[data-pos='contact'] .knob { --turn: 90deg; }
-
-.rotary:has(.pos-overview a:is(:hover, :focus-visible)) .knob { --turn: -90deg; }
-.rotary:has(.pos-experience a:is(:hover, :focus-visible)) .knob { --turn: -45deg; }
-.rotary:has(.pos-projects a:is(:hover, :focus-visible)) .knob { --turn: 0deg; }
-.rotary:has(.pos-interests a:is(:hover, :focus-visible)) .knob { --turn: 45deg; }
-.rotary:has(.pos-contact a:is(:hover, :focus-visible)) .knob { --turn: 90deg; }
-
-@media (max-width: 44rem) {
-  .rotary {
-    width: auto;
-    height: auto;
-  }
-
-  .rotary::before,
-  .rotary::after,
-  .knob,
-  .rotary-caption {
-    display: none;
-  }
-
-  .rotary ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .rotary li {
-    position: static;
-    transform: none;
-  }
-
-  .rotary a {
-    font-size: 0.8rem;
-    padding: 0.45rem 0.7rem;
-  }
-}
-
-/* Panels */
+/* Instrument bays: cream enamel in a black bezel, numbered like a real board */
 main {
   padding-block: 0.5rem;
+  counter-reset: bay;
 }
 
 .panel {
-  --fill-top: var(--panel-hi);
-  --fill-bottom: var(--panel);
-  margin: 1.6rem 0;
+  --fill-top: var(--bay-hi);
+  --fill-bottom: var(--bay);
+  margin: 1.8rem 0;
   padding: 1.6rem 1.5rem 1.8rem;
-  border: 1px solid var(--panel-lo);
+  border: 4px solid var(--bezel);
   border-radius: 4px;
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.35),
-    0 4px 0 var(--cabinet-edge),
-    0 10px 22px rgb(0 0 0 / 0.35);
+    0 0 0 4px var(--wall-dark),
+    0 8px 18px rgb(0 0 0 / 0.35);
   scroll-margin-top: 1rem;
+}
+
+.panel > h2::before {
+  counter-increment: bay;
+  content: counter(bay, decimal-leading-zero) / '';
+  display: inline-block;
+  margin: -0.4rem 0.8rem -0.4rem -1rem;
+  padding: 0.4rem 0.6rem;
+  color: #2b1800;
+  background: var(--lamp-amber);
+  border-radius: 3px 0 0 3px;
+}
+
+.bays {
+  display: grid;
+  gap: 0 1.8rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 60rem) {
+  .bays {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
 }
 
 .meta {
@@ -417,7 +310,7 @@ main {
 
 .subhead {
   font-family: var(--font-label);
-  font-size: 0.85rem;
+  font-size: 1rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   margin: 2rem 0 0.8rem;
@@ -432,25 +325,25 @@ main {
 
 @media (min-width: 56rem) {
   .hero {
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
     align-items: start;
   }
 }
 
 .hero h1 {
   font-family: var(--font-label);
-  font-size: clamp(2.2rem, 6vw, 3.1rem);
+  font-size: clamp(2.6rem, 7vw, 3.6rem);
   letter-spacing: 0.02em;
   margin: 0;
 }
 
 .hero .headline {
   font-family: var(--font-label);
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin: 0.3rem 0 0;
+  margin: 0.2rem 0 0;
 }
 
 .hero .sub {
@@ -462,9 +355,53 @@ main {
   display: grid;
   gap: 1rem;
   padding: 0.9rem;
-  background: var(--cabinet);
+  background: var(--bezel);
   border-radius: 4px;
   box-shadow: inset 0 3px 10px rgb(0 0 0 / 0.6);
+}
+
+/* Drum counters */
+.counters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem 1.4rem;
+  list-style: none;
+  margin: 0 0 1.4rem;
+  padding: 0;
+}
+
+.counters li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.drum {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: #0b0c0b;
+  border-radius: 3px;
+}
+
+.drum span {
+  width: 1.4rem;
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.8rem;
+  text-align: center;
+  color: #f4f1e6;
+  background: linear-gradient(#1c1e1c, #3a3d3a 50%, #1c1e1c);
+  border-radius: 1px;
+}
+
+.counter-label {
+  font-family: var(--font-label);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 /* Mimic diagram */
@@ -500,22 +437,17 @@ main {
   }
 }
 
-.vessel {
-  fill: var(--mimic-vessel);
-  stroke: var(--ink);
-  stroke-width: 1.5;
-}
-
+.vessel,
 .pump {
   fill: var(--mimic-vessel);
-  stroke: var(--ink);
+  stroke: var(--bezel);
   stroke-width: 1.5;
 }
 
 .rods path,
 .rods-inside,
 .shaft {
-  stroke: var(--ink);
+  stroke: var(--bezel);
   stroke-width: 2.5;
   fill: none;
 }
@@ -526,7 +458,7 @@ main {
 
 .core {
   fill: var(--lamp-amber);
-  stroke: var(--ink);
+  stroke: var(--bezel);
   stroke-width: 1;
 }
 
@@ -537,9 +469,9 @@ main {
 }
 
 .mimic text {
-  fill: var(--ink);
+  fill: var(--bezel);
   font-family: var(--font-label);
-  font-size: 8.5px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-anchor: middle;
@@ -548,6 +480,18 @@ main {
 
 .mimic .mimic-mark {
   font-size: 13px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .mimic text {
+    fill: var(--ink);
+  }
+
+  .rods path,
+  .rods-inside,
+  .shaft {
+    stroke: var(--ink);
+  }
 }
 
 /* Annunciator and lamp test toggle */
@@ -576,13 +520,12 @@ main {
   min-height: 3.3rem;
   padding: 0.3rem;
   font-family: var(--font-label);
-  font-size: 0.68rem;
+  font-size: 0.85rem;
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.1;
   letter-spacing: 0.05em;
   text-align: center;
   text-transform: uppercase;
-  hyphens: manual;
   color: #3b3e38;
   background: linear-gradient(#777b72, var(--lamp-off));
   border-radius: 1px;
@@ -650,7 +593,7 @@ body:has(#lamp-test:checked) .tile.alarm {
   left: 0;
   right: 0;
   font-family: var(--font-label);
-  font-size: 0.55rem;
+  font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-align: center;
@@ -659,12 +602,12 @@ body:has(#lamp-test:checked) .tile.alarm {
 
 .toggle-body::before {
   content: 'TEST';
-  top: 0.25rem;
+  top: 0.2rem;
 }
 
 .toggle-body::after {
   content: 'NORM';
-  bottom: 0.25rem;
+  bottom: 0.2rem;
 }
 
 /* The mounting nut and the bat handle. */
@@ -705,14 +648,11 @@ body:has(#lamp-test:checked) .tile.alarm {
 
 .toggle-text {
   font-family: var(--font-label);
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--plate-text);
-  background: var(--plate);
-  padding: 0.15rem 0.4rem;
-  border-radius: 2px;
   white-space: nowrap;
 }
 
@@ -729,68 +669,80 @@ body:has(#lamp-test:checked) .tile.alarm {
   }
 }
 
-/* Illuminated square pushbuttons */
+/* Round pushbuttons mounted on their legend plates */
 .buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.2rem 1.3rem;
+  gap: 0.9rem;
   list-style: none;
-  padding: 5px;
+  padding: 0;
   margin: 0.4rem 0 0;
 }
 
 .button {
+  --cap: radial-gradient(circle at 38% 32%, #6b6e6a, #1b1c1b 62%, #050505);
+  --glow: rgb(255 255 255 / 0.25);
+  position: relative;
   display: inline-flex;
   align-items: center;
-  min-height: 2.8rem;
-  padding: 0.5rem 1rem;
+  min-height: 3.1rem;
+  padding: 0.3rem 0.8rem 0.3rem 3.1rem;
   font-family: var(--font-label);
-  font-size: 0.82rem;
+  font-size: 1rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   text-decoration: none;
-  color: #1f1f1b;
-  background: linear-gradient(#f7f5ee, #d8d5c9);
-  border: 2px solid #111;
+  color: var(--plate-text);
+  background: linear-gradient(#262825, #121312);
   border-radius: 3px;
+  box-shadow: inset 0 0 0 1px #3c3e3b, 0 2px 4px rgb(0 0 0 / 0.35);
+}
+
+/* The cap: a round button in a chrome bezel. */
+.button::before {
+  content: '';
+  position: absolute;
+  left: 0.5rem;
+  top: 50%;
+  width: 1.95rem;
+  height: 1.95rem;
+  translate: 0 -50%;
+  border-radius: 50%;
+  background: var(--cap);
+  border: 2px solid #050505;
   box-shadow:
-    0 0 0 4px #3a3e3b,
-    0 4px 0 4px #171a18,
-    inset 0 -3px 6px rgb(0 0 0 / 0.18);
-  transition: translate 0.06s, box-shadow 0.06s;
+    0 0 0 3px #a9ada6,
+    0 0 0 4px #3c3f3b,
+    0 3px 4px 3px rgb(0 0 0 / 0.5);
+  transition: scale 0.06s;
 }
 
 .button.primary {
-  color: #2b1800;
-  background: linear-gradient(#ffe1a1, #f3a93a);
+  --cap: radial-gradient(circle at 38% 32%, #e6ffe9, var(--lamp-green) 45%, #1f7d3a);
+  --glow: rgb(94 227 127 / 0.7);
 }
 
-.button:hover {
-  filter: brightness(1.07);
+.button:hover::before {
   box-shadow:
-    0 0 0 4px #3a3e3b,
-    0 4px 0 4px #171a18,
-    0 0 18px 4px rgb(255 225 150 / 0.45);
+    0 0 0 3px #a9ada6,
+    0 0 0 4px #3c3f3b,
+    0 0 14px 6px var(--glow);
 }
 
-.button:active {
-  translate: 0 3px;
-  box-shadow:
-    0 0 0 4px #3a3e3b,
-    0 1px 0 4px #171a18,
-    inset 0 2px 6px rgb(0 0 0 / 0.3);
+.button:active::before {
+  scale: 0.9;
+  filter: brightness(0.8);
 }
 
-/* Event recorder */
+/* Event recorder with its pen selector */
 .recorder {
   margin: 0 0 1.8rem;
 }
 
 .recorder-window {
-  overflow-x: auto;
   padding: 0.6rem;
-  background: var(--cabinet);
+  background: var(--bezel);
   border-radius: 4px;
   box-shadow: inset 0 3px 10px rgb(0 0 0 / 0.6);
 }
@@ -798,8 +750,21 @@ body:has(#lamp-test:checked) .tile.alarm {
 .recorder svg {
   display: block;
   width: 100%;
-  min-width: 40rem;
   height: auto;
+}
+
+.recorder .rec-narrow {
+  display: none;
+}
+
+@media (max-width: 40rem) {
+  .recorder .rec-wide {
+    display: none;
+  }
+
+  .recorder .rec-narrow {
+    display: block;
+  }
 }
 
 .recorder .paper {
@@ -816,53 +781,227 @@ body:has(#lamp-test:checked) .tile.alarm {
   stroke-width: 1.2;
 }
 
-.recorder .scale,
-.recorder .channel {
+.recorder .scale {
   fill: var(--grid-text);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-}
-
-.recorder .scale {
   text-anchor: middle;
 }
 
+.recorder .channel {
+  font-family: var(--font-label);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
 .recorder .sprocket {
-  fill: var(--cabinet);
+  fill: var(--bezel);
+}
+
+.recorder .now {
+  stroke: var(--ink-1);
+  stroke-width: 1.4;
+  stroke-dasharray: 5 4;
+}
+
+.lane {
+  transition: opacity 0.2s;
+}
+
+.recorder:has(#rec-work:checked) .lane.study,
+.recorder:has(#rec-study:checked) .lane.work {
+  opacity: 0.12;
 }
 
 .trace {
   fill: none;
-  stroke-width: 2.2;
+  stroke-width: 2.4;
   stroke-linejoin: round;
+}
+
+.band {
+  opacity: 0.16;
 }
 
 .trace.ink-1 { stroke: var(--ink-1); }
 .trace.ink-2 { stroke: var(--ink-2); }
 .trace.ink-3 { stroke: var(--ink-3); }
 .trace.ink-4 { stroke: var(--ink-4); }
+.channel.ink-1, .band.ink-1 { fill: var(--ink-1); }
+.channel.ink-2, .band.ink-2 { fill: var(--ink-2); }
+.channel.ink-3, .band.ink-3 { fill: var(--ink-3); }
+.channel.ink-4, .band.ink-4 { fill: var(--ink-4); }
 
 .recorder figcaption {
   margin-top: 0.5rem;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--ink-muted);
 }
 
-/* Timeline, keyed to the recorder channels */
+/* Rotary selector switch: a chicken-head knob pointing at the chosen position */
+.selector {
+  --reach: 4.3rem;
+  --cx: 5.6rem;
+  position: relative;
+  width: 14rem;
+  height: 9.1rem;
+  margin: 0 0 0.8rem;
+  padding: 0;
+  border: 0;
+}
+
+.selector legend {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  translate: -50% 0;
+  padding: 0;
+  font-family: var(--font-label);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+/* Dial plate with an index tick at each position. */
+.selector::before,
+.selector::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: var(--cx);
+  width: 4.6rem;
+  height: 4.6rem;
+  translate: -50% -50%;
+  border-radius: 50%;
+}
+
+.selector::before {
+  background: radial-gradient(circle, #2c302d 0 60%, #1a1c1a 61%);
+}
+
+.selector::after {
+  background: conic-gradient(
+    #f1efe6 0deg 3deg,
+    transparent 3deg 52deg,
+    #f1efe6 52deg 58deg,
+    transparent 58deg 302deg,
+    #f1efe6 302deg 308deg,
+    transparent 308deg 357deg,
+    #f1efe6 357deg
+  );
+  mask: radial-gradient(circle closest-side, transparent 0 80%, #000 81% 97%, transparent 98%);
+}
+
+.selector-pos {
+  --angle: 0deg;
+  position: absolute;
+  left: 50%;
+  top: var(--cx);
+  transform: translate(-50%, -50%) rotate(var(--angle)) translateY(calc(-1 * var(--reach))) rotate(calc(-1 * var(--angle)));
+}
+
+.selector .pos-all { --angle: -55deg; }
+.selector .pos-work { --angle: 0deg; }
+.selector .pos-study { --angle: 55deg; }
+
+.selector input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+}
+
+.selector label {
+  display: block;
+  font-family: var(--font-label);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--plate-text);
+  background: var(--plate);
+  padding: 0.1rem 0.5rem;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.selector input:checked + label {
+  color: #2b1800;
+  background: var(--lamp-amber);
+}
+
+.selector input:focus-visible + label {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.selector-knob {
+  --turn: -55deg;
+  position: absolute;
+  left: 50%;
+  top: var(--cx);
+  width: 2.7rem;
+  height: 2.7rem;
+  translate: -50% -50%;
+  rotate: var(--turn);
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #4a4d4a, #0c0d0c 70%);
+  box-shadow: 0 3px 6px rgb(0 0 0 / 0.6);
+  transition: rotate 0.25s ease;
+  pointer-events: none;
+}
+
+.selector-knob::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -1.1rem;
+  width: 1.7rem;
+  height: 2.5rem;
+  translate: -50% 0;
+  clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
+  border-radius: 0.3rem 0.3rem 0 0;
+  background: linear-gradient(90deg, #0c0d0c 0%, #3e413e 50%, #0c0d0c 100%);
+}
+
+.selector-knob::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -0.95rem;
+  width: 3px;
+  height: 1.9rem;
+  translate: -50% 0;
+  background: #f4f1e6;
+  border-radius: 2px;
+}
+
+.selector:has(#rec-work:checked) .selector-knob { --turn: 0deg; }
+.selector:has(#rec-study:checked) .selector-knob { --turn: 55deg; }
+
+/* Timeline, keyed to the recorder pens by colour */
 .timeline {
   list-style: none;
   padding: 0;
   margin: 0;
-  border-left: 3px solid var(--panel-lo);
 }
 
 .timeline li {
-  padding: 0 0 1.8rem 1.2rem;
+  padding: 0 0 1.6rem 1.2rem;
+  border-left: 4px solid var(--pen, var(--module-edge));
 }
 
+.timeline li.ink-1 { --pen: var(--ink-1); }
+.timeline li.ink-2 { --pen: var(--ink-2); }
+.timeline li.ink-3 { --pen: var(--ink-3); }
+.timeline li.ink-4 { --pen: var(--ink-4); }
+
 .timeline h3 {
-  margin: 0.3rem 0 0;
+  margin: 0;
   font-size: 1.05rem;
 }
 
@@ -870,31 +1009,16 @@ body:has(#lamp-test:checked) .tile.alarm {
   margin: 0.3rem 0 0;
 }
 
-.pen {
-  display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #fff;
-  padding: 0 0.45rem;
-  border-radius: 2px;
-}
-
-.pen.ink-1 { background: var(--ink-1); }
-.pen.ink-2 { background: var(--ink-2); }
-.pen.ink-3 { background: var(--ink-3); }
-.pen.ink-4 { background: var(--ink-4); }
-
-/* Skills: tactile key switches */
+/* Skills: square key switches */
 .skill-groups {
   display: grid;
   gap: 1.4rem;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
 }
 
 .skill-groups h3 {
   font-family: var(--font-label);
-  font-size: 0.85rem;
+  font-size: 1rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   margin: 0 0 0.6rem;
@@ -911,13 +1035,14 @@ body:has(#lamp-test:checked) .tile.alarm {
 
 .tags li {
   font-family: var(--font-label);
-  font-size: 0.72rem;
+  font-size: 0.85rem;
+  font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--plate-text);
   background: var(--plate);
   border-radius: 2px;
-  padding: 0.1rem 0.5rem;
+  padding: 0.05rem 0.5rem;
 }
 
 .keys {
@@ -926,25 +1051,21 @@ body:has(#lamp-test:checked) .tile.alarm {
 }
 
 .keys li {
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
-  text-transform: none;
-  color: #1b1d19;
-  background: linear-gradient(#eeefea, #c6c9c0);
-  border: 1px solid #62675f;
-  border-radius: 5px;
-  padding: 0.35rem 0.75rem;
-  box-shadow:
-    inset 0 1px 0 #fff,
-    0 3px 0 #50554e,
-    0 4px 5px rgb(0 0 0 / 0.3);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1b1c18;
+  background: linear-gradient(#f5f0e1, #d9d1b9);
+  border: 2px solid var(--bezel);
+  border-radius: 2px;
+  padding: 0.3rem 0.65rem;
+  box-shadow: 0 3px 0 var(--bezel);
 }
 
 /* Languages: edgewise vertical meters */
 .meters {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.2rem 1.6rem;
+  gap: 1.4rem 1.8rem;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -954,14 +1075,14 @@ body:has(#lamp-test:checked) .tile.alarm {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 6.5rem;
+  width: 7.5rem;
   text-align: center;
 }
 
 .meter svg {
-  width: 4rem;
+  width: 7.5rem;
   height: auto;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
 }
 
 .meter-bezel {
@@ -977,16 +1098,28 @@ body:has(#lamp-test:checked) .tile.alarm {
   stroke-width: 1;
 }
 
+.meter-tick.major {
+  stroke-width: 2;
+}
+
 .meter-scale {
-  fill: #222;
+  fill: #1b1c18;
   font-family: var(--font-label);
-  font-size: 7px;
+  font-size: 13px;
   font-weight: 700;
+  letter-spacing: 0.04em;
   text-anchor: end;
+  text-transform: uppercase;
+}
+
+.meter-track {
+  fill: #e4dfcf;
+  stroke: #8d887a;
+  stroke-width: 1;
 }
 
 .meter-bar {
-  fill: rgb(179 38 30 / 0.3);
+  fill: rgb(179 38 30 / 0.45);
 }
 
 .meter-pointer {
@@ -998,11 +1131,11 @@ body:has(#lamp-test:checked) .tile.alarm {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  font-size: 0.85rem;
+  font-size: 1.05rem;
 }
 
 .meter-reading {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--ink-muted);
 }
 
@@ -1010,17 +1143,14 @@ body:has(#lamp-test:checked) .tile.alarm {
 .cards {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
 }
 
 .card {
-  background: linear-gradient(var(--module-hi), var(--module));
-  border: 1px solid var(--panel-lo);
-  border-radius: 4px;
+  background: var(--module);
+  border: 2px solid var(--module-edge);
+  border-radius: 3px;
   padding: 1rem 1.2rem 1.1rem;
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.3),
-    inset 0 -2px 0 rgb(0 0 0 / 0.12);
 }
 
 .card :is(h2, h3) {
@@ -1041,7 +1171,7 @@ body:has(#lamp-test:checked) .tile.alarm {
   align-items: center;
   gap: 0.45rem;
   font-family: var(--font-label);
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -1053,8 +1183,8 @@ body:has(#lamp-test:checked) .tile.alarm {
 }
 
 .lamp {
-  width: 0.85rem;
-  height: 0.85rem;
+  width: 0.95rem;
+  height: 0.95rem;
   border-radius: 50%;
   border: 2px solid #2a2d2a;
   background: radial-gradient(circle at 35% 35%, #d8ffe0, var(--lamp-green) 60%);
@@ -1081,7 +1211,7 @@ body:has(#lamp-test:checked) .placeholder .lamp {
 
 .logsheet {
   --rule: 1.7rem;
-  margin: 1.6rem 0;
+  margin: 1.8rem 0;
   padding: 1.4rem 1.5rem 2rem 4.2rem;
   color: #1d2430;
   background:
@@ -1114,13 +1244,13 @@ body:has(#lamp-test:checked) .placeholder .lamp {
 
 .logsheet h1 {
   font-family: var(--font-label);
-  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  font-size: clamp(1.8rem, 5vw, 2.4rem);
   margin: 0.4rem 0 0.2rem;
 }
 
 .logsheet h2 {
   font-family: var(--font-label);
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin: 1.7rem 0 0;
@@ -1161,8 +1291,16 @@ body:has(#lamp-test:checked) .placeholder .lamp {
 .site-footer {
   margin-top: 2rem;
   padding-block: 1.5rem 2rem;
-  color: var(--footer-text);
   font-size: 0.9rem;
+}
+
+.site-footer p {
+  display: inline-block;
+  margin: 0;
+  padding: 0.3rem 0.8rem;
+  color: var(--plate-text);
+  background: var(--plate);
+  border-radius: 3px;
 }
 
 @media (prefers-reduced-motion: reduce) {

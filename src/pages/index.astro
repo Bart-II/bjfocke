@@ -8,9 +8,16 @@ import VerticalMeter from '../components/VerticalMeter.astro';
 import { profile, experience, education, skills, languages, interests } from '../data/resume';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const featured = (await getCollection('projects', (p) => p.data.featured)).sort(
-  (a, b) => a.data.order - b.data.order,
-);
+const allProjects = await getCollection('projects');
+const featured = allProjects.filter((p) => p.data.featured).sort((a, b) => a.data.order - b.data.order);
+
+// Drum counters on the front board. Every reading is counted from the resume data.
+const counters = [
+  { label: 'Roles', value: experience.length },
+  { label: 'Studies', value: education.length },
+  { label: 'Projects', value: allProjects.filter((p) => !p.data.placeholder).length },
+  { label: 'Languages', value: languages.length },
+];
 
 // Annunciator windows. Alarms stay dark until the lamp test switch is thrown.
 const annunciators = [
@@ -27,8 +34,8 @@ const annunciators = [
 
 // Experience runs on channels 1–3 of the recorder, education on the channels after it.
 const channels = [
-  ...experience.map((r) => ({ label: r.title, period: r.period })),
-  ...education.map((s) => ({ label: s.degree, period: s.period })),
+  ...experience.map((r) => ({ label: r.short, period: r.period, kind: 'work' as const })),
+  ...education.map((s) => ({ label: s.short, period: s.period, kind: 'study' as const })),
 ];
 ---
 
@@ -38,10 +45,20 @@ const channels = [
       <h1>{profile.name}</h1>
       <p class="headline">{profile.headline}</p>
       <p class="sub">{profile.subheadline} · {profile.location}</p>
+      <ul class="counters">
+        {counters.map((c) => (
+          <li>
+            <span class="drum" aria-hidden="true">
+              {String(c.value).padStart(2, '0').split('').map((d) => <span>{d}</span>)}
+            </span>
+            <span class="counter-label"><span class="visually-hidden">{c.value} </span>{c.label}</span>
+          </li>
+        ))}
+      </ul>
       {profile.about.map((paragraph) => <p>{paragraph}</p>)}
       <ul class="buttons">
         {profile.cv.map((cv) => (
-          <li><a class="button primary" href={`${base}/${cv.file}`}>Download {cv.label}</a></li>
+          <li><a class="button primary" href={`${base}/${cv.file}`}><span class="visually-hidden">Download </span>{cv.label}</a></li>
         ))}
         <li><a class="button" href={profile.links.linkedin} rel="me noopener">LinkedIn</a></li>
         <li><a class="button" href={profile.links.github} rel="me noopener">GitHub</a></li>
@@ -70,12 +87,11 @@ const channels = [
     <h2>Experience</h2>
     <EventRecorder
       channels={channels}
-      caption="Event recorder: experience on channels 1 to 3, education on channels 4 to 7."
+      caption="Event recorder of work and study since 2019. The dashed line marks today; the pens switch picks which traces are drawn."
     />
     <ol class="timeline">
       {experience.map((role, i) => (
-        <li>
-          <span class={`pen ink-${(i % 4) + 1}`}>CH{i + 1}</span>
+        <li class={`ink-${(i % 4) + 1}`}>
           <h3>{role.title}</h3>
           <p class="meta">
             {role.organisation} · {role.period}{role.location && ` · ${role.location}`}
@@ -94,14 +110,14 @@ const channels = [
     <p class="more"><a href={`${base}/projects/`}>All projects →</a></p>
   </section>
 
+  <div class="bays">
   <section class="panel" id="education">
     <h2>Education</h2>
     <ol class="timeline">
       {education.map((study, i) => {
         const channel = experience.length + i + 1;
         return (
-          <li>
-            <span class={`pen ink-${((channel - 1) % 4) + 1}`}>CH{channel}</span>
+          <li class={`ink-${((channel - 1) % 4) + 1}`}>
             <h3>{study.degree}</h3>
             <p class="meta">{study.institution} · {study.period}</p>
             {study.summary && <p>{study.summary}</p>}
@@ -129,6 +145,9 @@ const channels = [
     </ul>
   </section>
 
+  </div>
+
+  <div class="bays">
   <section class="panel" id="interests">
     <h2>Interests</h2>
     <div class="cards">
@@ -150,4 +169,5 @@ const channels = [
       <li><a class="button" href={profile.links.github} rel="me noopener">GitHub</a></li>
     </ul>
   </section>
+  </div>
 </Base>
