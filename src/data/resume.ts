@@ -16,7 +16,10 @@ export const profile = {
     // TODO: add a public contact email, e.g. 'mailto:you@example.com'
     email: '',
   },
-  cv: [{ label: 'CV (Dutch)', file: 'cv-nl.pdf' }],
+  cv: [
+    { label: 'CV (English)', file: 'cv-en.pdf' },
+    { label: 'CV (Dutch)', file: 'cv-nl.pdf' },
+  ],
 };
 
 export interface Role {
