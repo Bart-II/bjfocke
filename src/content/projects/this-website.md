@@ -11,7 +11,7 @@ This site is built with [Astro](https://astro.build) and deployed as static file
 
 ## Design
 
-The look is borrowed from the main control boards of 1960s and 70s nuclear power plants: sea-green panels, engraved legend plates, an annunciator with a working lamp test switch, a rotary mode selector for navigation, edgewise meters and a multi-pen event recorder for the timeline. All of it is plain HTML, CSS and SVG.
+A quiet, editorial layout that reads like a printed CV: warm off-white paper, Source Serif headings, Inter for body text and a single deep-green accent. Both fonts are self-hosted.
 
 ## Security choices
 

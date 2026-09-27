@@ -17,8 +17,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <Base title={project.data.title} description={project.data.summary} section="projects">
-  <article class="prose logsheet">
-    <p class="log-header" aria-hidden="true">Operator log · Unit 1</p>
+  <article class="prose">
     <a class="back" href={`${base}/projects/`}>← All projects</a>
     <h1>{project.data.title}</h1>
     {project.data.period && <p class="meta">{project.data.period}</p>}

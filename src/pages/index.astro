@@ -2,107 +2,50 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import MimicDiagram from '../components/MimicDiagram.astro';
-import EventRecorder from '../components/EventRecorder.astro';
-import VerticalMeter from '../components/VerticalMeter.astro';
 import { profile, experience, education, skills, languages, interests } from '../data/resume';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const allProjects = await getCollection('projects');
-const featured = allProjects.filter((p) => p.data.featured).sort((a, b) => a.data.order - b.data.order);
-
-// Drum counters on the front board. Every reading is counted from the resume data.
-const counters = [
-  { label: 'Roles', value: experience.length },
-  { label: 'Studies', value: education.length },
-  { label: 'Projects', value: allProjects.filter((p) => !p.data.placeholder).length },
-  { label: 'Languages', value: languages.length },
-];
-
-// Annunciator windows. Alarms stay dark until the lamp test switch is thrown.
-const annunciators = [
-  { text: 'Information security', kind: 'lit' },
-  { text: 'Governance', kind: 'lit' },
-  { text: 'Reactor trip', kind: 'alarm' },
-  { text: 'Incident response', kind: 'lit' },
-  { text: 'Security policy', kind: 'lit' },
-  { text: 'NATO NCI Agency', kind: 'lit' },
-  { text: 'Coolant flow low', kind: 'alarm' },
-  { text: 'Ministry of the Interior', kind: 'lit' },
-  { text: 'European economics', kind: 'lit' },
-];
-
-// Experience runs on channels 1–3 of the recorder, education on the channels after it.
-const channels = [
-  ...experience.map((r) => ({ label: r.short, period: r.period, kind: 'work' as const })),
-  ...education.map((s) => ({ label: s.short, period: s.period, kind: 'study' as const })),
-];
+const featured = (await getCollection('projects', (p) => p.data.featured)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const [firstCv, ...otherCvs] = profile.cv;
 ---
 
-<Base section="overview">
-  <section class="panel hero" id="about">
-    <div class="hero-text">
-      <h1>{profile.name}</h1>
-      <p class="headline">{profile.headline}</p>
-      <p class="sub">{profile.subheadline} · {profile.location}</p>
-      <ul class="counters">
-        {counters.map((c) => (
-          <li>
-            <span class="drum" aria-hidden="true">
-              {String(c.value).padStart(2, '0').split('').map((d) => <span>{d}</span>)}
-            </span>
-            <span class="counter-label"><span class="visually-hidden">{c.value} </span>{c.label}</span>
-          </li>
-        ))}
-      </ul>
+<Base>
+  <section class="hero" id="about">
+    <h1>{profile.name}</h1>
+    <p class="lede">{profile.headline}</p>
+    <p class="sub">{profile.subheadline} · {profile.location}</p>
+    <div class="about">
       {profile.about.map((paragraph) => <p>{paragraph}</p>)}
-      <ul class="buttons">
-        {profile.cv.map((cv) => (
-          <li><a class="button primary" href={`${base}/${cv.file}`}><span class="visually-hidden">Download </span>{cv.label}</a></li>
-        ))}
-        <li><a class="button" href={profile.links.linkedin} rel="me noopener">LinkedIn</a></li>
-        <li><a class="button" href={profile.links.github} rel="me noopener">GitHub</a></li>
-      </ul>
     </div>
-    <div class="hero-board">
-      <MimicDiagram />
-      <div class="annunciator-bay">
-        <ul class="annunciator" aria-label="Focus areas">
-          {annunciators.map((a) => (
-            <li class={`tile ${a.kind}`} aria-hidden={a.kind === 'alarm' ? 'true' : undefined}>{a.text}</li>
-          ))}
-        </ul>
-        <div class="toggle">
-          <input type="checkbox" id="lamp-test" />
-          <label for="lamp-test">
-            <span class="toggle-body" aria-hidden="true"><span class="bat"></span></span>
-            <span class="toggle-text">Lamp test</span>
-          </label>
-        </div>
-      </div>
-    </div>
+    <ul class="buttons">
+      <li><a class="button primary" href={`${base}/${firstCv.file}`}>Download {firstCv.label}</a></li>
+      {otherCvs.map((cv) => (
+        <li><a class="button" href={`${base}/${cv.file}`}>{cv.label}</a></li>
+      ))}
+      <li><a class="button" href={profile.links.linkedin} rel="me noopener">LinkedIn</a></li>
+      <li><a class="button" href={profile.links.github} rel="me noopener">GitHub</a></li>
+    </ul>
   </section>
 
-  <section class="panel" id="experience">
+  <section id="experience">
     <h2>Experience</h2>
-    <EventRecorder
-      channels={channels}
-      caption="Event recorder of work and study since 2019. The dashed line marks today; the pens switch picks which traces are drawn."
-    />
-    <ol class="timeline">
-      {experience.map((role, i) => (
-        <li class={`ink-${(i % 4) + 1}`}>
-          <h3>{role.title}</h3>
-          <p class="meta">
-            {role.organisation} · {role.period}{role.location && ` · ${role.location}`}
-          </p>
-          <p>{role.summary}</p>
+    <ol class="entries">
+      {experience.map((role) => (
+        <li class="entry">
+          <p class="when">{role.period}</p>
+          <div>
+            <h3>{role.title}</h3>
+            <p class="meta">{role.organisation}{role.location && ` · ${role.location}`}</p>
+            <p>{role.summary}</p>
+          </div>
         </li>
       ))}
     </ol>
   </section>
 
-  <section class="panel" id="projects">
+  <section id="projects">
     <h2>Featured projects</h2>
     <div class="cards">
       {featured.map((project) => <ProjectCard project={project} />)}
@@ -110,45 +53,39 @@ const channels = [
     <p class="more"><a href={`${base}/projects/`}>All projects →</a></p>
   </section>
 
-  <div class="bays">
-  <section class="panel" id="education">
+  <section id="education">
     <h2>Education</h2>
-    <ol class="timeline">
-      {education.map((study, i) => {
-        const channel = experience.length + i + 1;
-        return (
-          <li class={`ink-${((channel - 1) % 4) + 1}`}>
+    <ol class="entries">
+      {education.map((study) => (
+        <li class="entry">
+          <p class="when">{study.period}</p>
+          <div>
             <h3>{study.degree}</h3>
-            <p class="meta">{study.institution} · {study.period}</p>
+            <p class="meta">{study.institution}</p>
             {study.summary && <p>{study.summary}</p>}
-          </li>
-        );
-      })}
+          </div>
+        </li>
+      ))}
     </ol>
   </section>
 
-  <section class="panel" id="skills">
+  <section id="skills">
     <h2>Skills</h2>
-    <div class="skill-groups">
+    <dl class="skills">
       {skills.map((group) => (
-        <div>
-          <h3>{group.group}</h3>
-          <ul class="tags keys">
-            {group.items.map((item) => <li>{item}</li>)}
-          </ul>
+        <div class="entry">
+          <dt class="when">{group.group}</dt>
+          <dd>{group.items.join(' · ')}</dd>
         </div>
       ))}
-    </div>
-    <h3 class="subhead">Languages</h3>
-    <ul class="meters">
-      {languages.map((l) => <VerticalMeter label={l.language} reading={l.level} value={l.meter} />)}
-    </ul>
+      <div class="entry">
+        <dt class="when">Languages</dt>
+        <dd>{languages.map((l) => `${l.language} (${l.level.toLowerCase()})`).join(' · ')}</dd>
+      </div>
+    </dl>
   </section>
 
-  </div>
-
-  <div class="bays">
-  <section class="panel" id="interests">
+  <section id="interests">
     <h2>Interests</h2>
     <div class="cards">
       {interests.map((interest) => (
@@ -160,14 +97,13 @@ const channels = [
     </div>
   </section>
 
-  <section class="panel" id="contact">
+  <section id="contact">
     <h2>Contact</h2>
     <p>The best way to reach me is through LinkedIn.</p>
     <ul class="buttons">
       {profile.links.email && <li><a class="button primary" href={profile.links.email}>Email</a></li>}
-      <li><a class="button" href={profile.links.linkedin} rel="me noopener">LinkedIn</a></li>
+      <li><a class="button primary" href={profile.links.linkedin} rel="me noopener">LinkedIn</a></li>
       <li><a class="button" href={profile.links.github} rel="me noopener">GitHub</a></li>
     </ul>
   </section>
-  </div>
 </Base>
