@@ -3,15 +3,22 @@ import type { CollectionEntry } from 'astro:content';
 
 interface Props {
   project: CollectionEntry<'projects'>;
+  /** Heading level of the title, so it follows the page's own outline. */
+  level?: 2 | 3;
 }
 
-const { project } = Astro.props;
+const { project, level = 3 } = Astro.props;
+const Heading = `h${level}`;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const { title, summary, period, tags, placeholder } = project.data;
 ---
 
 <article class:list={['card', { placeholder }]}>
-  <h3><a href={`${base}/projects/${project.id}/`}>{title}</a></h3>
+  <p class="pilot">
+    <span class="lamp" aria-hidden="true"></span>
+    <span>{placeholder ? 'Standby' : 'Online'}</span>
+  </p>
+  <Heading><a href={`${base}/projects/${project.id}/`}>{title}</a></Heading>
   {period && <p class="meta">{period}</p>}
   <p>{summary}</p>
   <ul class="tags">

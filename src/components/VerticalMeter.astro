@@ -1,0 +1,41 @@
+---
+// Edgewise vertical meter. `value` runs from 0 to 100; the label and reading
+// are rendered as text so the meter itself is decoration.
+
+interface Props {
+  label: string;
+  reading: string;
+  value: number;
+}
+
+const { label, reading, value } = Astro.props;
+
+const top = 14;
+const bottom = 186;
+const y = (v: number) => bottom - (Math.max(0, Math.min(100, v)) / 100) * (bottom - top);
+const ticks = Array.from({ length: 21 }, (_, i) => i * 5);
+const bands = [
+  { v: 20, text: 'BAS' },
+  { v: 50, text: 'WRK' },
+  { v: 80, text: 'PRO' },
+  { v: 100, text: 'NAT' },
+];
+const pointer = y(value);
+---
+
+<li class="meter">
+  <svg viewBox="0 0 64 200" aria-hidden="true" focusable="false">
+    <rect class="meter-bezel" x="1" y="1" width="62" height="198" rx="5" />
+    <rect class="meter-face" x="8" y="8" width="48" height="184" rx="2" />
+    {ticks.map((t) => (
+      <line class="meter-tick" x1={t % 25 === 0 ? 30 : 36} x2="44" y1={y(t)} y2={y(t)} />
+    ))}
+    {bands.map((b) => (
+      <text class="meter-scale" x="27" y={y(b.v) + 3}>{b.text}</text>
+    ))}
+    <rect class="meter-bar" x="46" y={pointer} width="6" height={bottom - pointer} />
+    <path class="meter-pointer" d={`M44 ${pointer} l10 -5 v10 z`} />
+  </svg>
+  <span class="meter-label">{label}</span>
+  <span class="meter-reading">{reading}</span>
+</li>
