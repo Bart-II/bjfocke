@@ -1,0 +1,53 @@
+---
+import '../styles/global.css';
+import { profile } from '../data/resume';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = `${profile.name}: ${profile.headline}. ${profile.subheadline}.` } = Astro.props;
+const pageTitle = title ? `${title} | ${profile.name}` : `${profile.name} | ${profile.headline}`;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const csp = [
+  "default-src 'none'",
+  "style-src 'self'",
+  "img-src 'self'",
+  "font-src 'self'",
+  "base-uri 'self'",
+  "form-action 'none'",
+].join('; ');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Security-Policy" content={csp} />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="description" content={description} />
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="container nav">
+        <a class="brand" href={`${base}/`}>{profile.name}</a>
+        <ul>
+          <li><a href={`${base}/#experience`}>Experience</a></li>
+          <li><a href={`${base}/projects/`}>Projects</a></li>
+          <li><a href={`${base}/#interests`}>Interests</a></li>
+          <li><a href={`${base}/#contact`}>Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main class="container">
+      <slot />
+    </main>
+    <footer class="site-footer container">
+      <p>© {new Date().getFullYear()} {profile.name} · No cookies, no trackers.</p>
+    </footer>
+  </body>
+</html>
