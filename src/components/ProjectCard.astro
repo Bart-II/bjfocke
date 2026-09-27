@@ -14,10 +14,6 @@ const { title, summary, period, tags, placeholder } = project.data;
 ---
 
 <article class:list={['card', { placeholder }]}>
-  <p class="pilot">
-    <span class="lamp" aria-hidden="true"></span>
-    <span>{placeholder ? 'Standby' : 'Online'}</span>
-  </p>
   <Heading><a href={`${base}/projects/${project.id}/`}>{title}</a></Heading>
   {period && <p class="meta">{period}</p>}
   <p>{summary}</p>

@@ -1,21 +1,24 @@
 ---
-import '@fontsource/barlow-condensed/latin-500.css';
-import '@fontsource/barlow-condensed/latin-700.css';
+import '@fontsource/ibm-plex-mono/latin-400.css';
+import '@fontsource/ibm-plex-mono/latin-400-italic.css';
+import '@fontsource/ibm-plex-mono/latin-600.css';
 import '../styles/global.css';
 import { profile } from '../data/resume';
 
 interface Props {
   title?: string;
   description?: string;
-  /** Which lamp in the header navigation is lit. */
-  section?: 'overview' | 'experience' | 'projects' | 'interests' | 'contact';
+  /** Which header link is marked as the current page. */
+  section?: 'experience' | 'projects' | 'interests' | 'contact';
 }
 
 const {
   title,
   description = `${profile.name}: ${profile.headline}. ${profile.subheadline}.`,
-  section = 'overview',
+  section,
 } = Astro.props;
+// Shown as the home directory in the header, e.g. "~/bart-fokke".
+const slug = profile.name.toLowerCase().replace(/\s+/g, '-');
 const pageTitle = title ? `${title} | ${profile.name}` : `${profile.name} | ${profile.headline}`;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const csp = [
@@ -28,8 +31,7 @@ const csp = [
 ].join('; ');
 
 // Header navigation, left to right.
-const positions = [
-  { id: 'overview', label: 'Overview', href: `${base}/` },
+const links = [
   { id: 'experience', label: 'Experience', href: `${base}/#experience` },
   { id: 'projects', label: 'Projects', href: `${base}/projects/` },
   { id: 'interests', label: 'Interests', href: `${base}/#interests` },
@@ -52,13 +54,10 @@ const positions = [
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="container header-inner">
-        <a class="brand plate" href={`${base}/`}>
-          <span class="brand-name">{profile.name}</span>
-          <span class="brand-unit">Unit 1 · Main control board</span>
-        </a>
-        <nav class="mode-lamps" aria-label="Main">
+        <a class="brand" href={`${base}/`} aria-label={`${profile.name}, home`}>~/{slug}</a>
+        <nav class="nav" aria-label="Main">
           <ul>
-            {positions.map((p) => (
+            {links.map((p) => (
               <li>
                 <a href={p.href} aria-current={p.id === section ? 'page' : undefined}>{p.label}</a>
               </li>
@@ -71,7 +70,7 @@ const positions = [
       <slot />
     </main>
     <footer class="site-footer container">
-      <p>© {new Date().getFullYear()} {profile.name} · No cookies, no trackers, no JavaScript.</p>
+      <p><span aria-hidden="true"># </span>© {new Date().getFullYear()} {profile.name} · No cookies, no trackers, no JavaScript.</p>
     </footer>
   </body>
 </html>
