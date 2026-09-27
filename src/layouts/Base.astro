@@ -1,8 +1,7 @@
 ---
-import '@fontsource/source-serif-4/latin-400.css';
-import '@fontsource/source-serif-4/latin-600.css';
-import '@fontsource/inter/latin-400.css';
-import '@fontsource/inter/latin-600.css';
+import '@fontsource/ibm-plex-mono/latin-400.css';
+import '@fontsource/ibm-plex-mono/latin-400-italic.css';
+import '@fontsource/ibm-plex-mono/latin-600.css';
 import '../styles/global.css';
 import { profile } from '../data/resume';
 
@@ -18,6 +17,8 @@ const {
   description = `${profile.name}: ${profile.headline}. ${profile.subheadline}.`,
   section,
 } = Astro.props;
+// Shown as the home directory in the header, e.g. "~/bart-fokke".
+const slug = profile.name.toLowerCase().replace(/\s+/g, '-');
 const pageTitle = title ? `${title} | ${profile.name}` : `${profile.name} | ${profile.headline}`;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const csp = [
@@ -53,7 +54,7 @@ const links = [
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="container header-inner">
-        <a class="brand" href={`${base}/`}>{profile.name}</a>
+        <a class="brand" href={`${base}/`} aria-label={`${profile.name}, home`}>~/{slug}</a>
         <nav class="nav" aria-label="Main">
           <ul>
             {links.map((p) => (
@@ -69,7 +70,7 @@ const links = [
       <slot />
     </main>
     <footer class="site-footer container">
-      <p>© {new Date().getFullYear()} {profile.name} · No cookies, no trackers, no JavaScript.</p>
+      <p><span aria-hidden="true"># </span>© {new Date().getFullYear()} {profile.name} · No cookies, no trackers, no JavaScript.</p>
     </footer>
   </body>
 </html>

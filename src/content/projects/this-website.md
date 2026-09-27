@@ -11,7 +11,7 @@ This site is built with [Astro](https://astro.build) and deployed as static file
 
 ## Design
 
-A quiet, editorial layout that reads like a printed CV: warm off-white paper, Source Serif headings, Inter for body text and a single deep-green accent. Both fonts are self-hosted.
+The site is styled like a terminal session: a dark screen, IBM Plex Mono throughout, green prompts and amber dates. The font is self-hosted.
 
 ## Security choices
 

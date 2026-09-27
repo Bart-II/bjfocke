@@ -1,34 +1,19 @@
 /*
- * Theme: editorial. Reads like a printed CV: warm off-white paper, serif
- * headings, dates in the margin and one deep-green accent.
+ * Theme: terminal. A dark screen, IBM Plex Mono throughout, green prompts,
+ * amber dates and "## headings" like a Markdown file in a shell.
  */
 
 :root {
-  --bg: #faf8f3;
-  --surface: #f2eee4;
-  --text: #1c1b19;
-  --muted: #5f5a50;
-  --faint: #6b665b;
-  --rule: #e2dccf;
-  --accent: #1f4e45;
-  --accent-text: #ffffff;
-  --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
-  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #171614;
-    --surface: #211f1c;
-    --text: #ece8df;
-    --muted: #b3ada1;
-    --faint: #9a9489;
-    --rule: #34312c;
-    --accent: #86c7b6;
-    --accent-text: #10201c;
-    color-scheme: dark;
-  }
+  --bg: #0f1216;
+  --window: #141920;
+  --line: #2a323b;
+  --text: #d7dde3;
+  --bright: #ffffff;
+  --muted: #98a3ae;
+  --green: #7ee2a8;
+  --amber: #f2c46d;
+  --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  color-scheme: dark;
 }
 
 *,
@@ -39,45 +24,46 @@
 
 html {
   scroll-behavior: smooth;
+  background: var(--bg);
 }
 
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: var(--sans);
-  font-size: 1.0625rem;
-  line-height: 1.65;
+  font-family: var(--mono);
+  font-size: 1rem;
+  line-height: 1.7;
 }
 
 a {
-  color: var(--accent);
-  text-underline-offset: 0.18em;
+  color: var(--green);
+  text-underline-offset: 0.2em;
 }
 
 a:hover {
-  text-decoration-thickness: 2px;
+  color: var(--bright);
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--amber);
   outline-offset: 3px;
+}
+
+::selection {
+  background: var(--green);
+  color: var(--bg);
 }
 
 h1,
 h2,
 h3 {
-  line-height: 1.2;
-}
-
-h3 {
-  font-family: var(--serif);
+  line-height: 1.3;
   font-weight: 600;
-  font-size: 1.2rem;
 }
 
 .container {
-  max-width: 60rem;
+  max-width: 58rem;
   margin: 0 auto;
   padding: 0 1.25rem;
 }
@@ -87,13 +73,24 @@ h3 {
   left: 1rem;
   top: -4rem;
   z-index: 2;
-  background: var(--accent);
-  color: var(--accent-text);
+  background: var(--green);
+  color: var(--bg);
   padding: 0.5rem 1rem;
 }
 
 .skip-link:focus {
   top: 1rem;
+}
+
+/* Shell prompt before a decorative command. */
+.prompt {
+  margin: 0;
+  color: var(--text);
+}
+
+.prompt::before {
+  content: '$ ';
+  color: var(--green);
 }
 
 /* Header */
@@ -103,70 +100,108 @@ h3 {
   gap: 0.5rem 2rem;
   align-items: baseline;
   justify-content: space-between;
-  padding-block: 1.5rem;
-  border-bottom: 1px solid var(--rule);
+  padding-block: 1.4rem;
 }
 
 .brand {
-  font-family: var(--serif);
   font-weight: 600;
-  font-size: 1.2rem;
-  color: var(--text);
+  color: var(--green);
   text-decoration: none;
 }
 
 .nav ul {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem 1.6rem;
+  gap: 0.25rem 1.5rem;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .nav a {
-  color: var(--text);
+  color: var(--muted);
   text-decoration: none;
-  font-size: 0.95rem;
+  text-transform: lowercase;
+  font-size: 0.92rem;
 }
 
 .nav a:hover,
 .nav a[aria-current='page'] {
-  color: var(--accent);
-  text-decoration: underline;
+  color: var(--green);
 }
 
-/* Hero */
-.hero {
-  padding: 4.5rem 0 1rem;
+.nav a[aria-current='page']::before {
+  content: '> ' / '';
+}
+
+/* Hero: a terminal window */
+.terminal {
+  margin-top: 2rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--window);
+  overflow: hidden;
+}
+
+.titlebar {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 0;
+  padding: 0.45rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.dots {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #3a434d;
+  box-shadow: 16px 0 0 #3a434d, 32px 0 0 #3a434d;
+  margin-right: 32px;
+}
+
+.screen {
+  padding: 1.6rem 1.8rem 1.9rem;
+}
+
+.screen > p {
+  max-width: 44rem;
 }
 
 .hero h1 {
-  font-family: var(--serif);
-  font-weight: 600;
-  font-size: clamp(2.8rem, 8vw, 4.4rem);
-  letter-spacing: -0.01em;
-  line-height: 1.05;
-  margin: 0 0 0.6rem;
+  font-size: clamp(2rem, 7vw, 2.9rem);
+  color: var(--bright);
+  margin: 0.4rem 0 0.2rem;
+}
+
+.cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 0.9em;
+  margin-left: 0.15em;
+  vertical-align: -0.05em;
+  background: var(--green);
+  animation: blink 1.1s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
 }
 
 .lede {
-  font-family: var(--serif);
-  font-size: clamp(1.3rem, 3vw, 1.6rem);
+  color: var(--amber);
   margin: 0;
 }
 
 .sub {
   color: var(--muted);
-  margin: 0.3rem 0 1.8rem;
-}
-
-.about {
-  max-width: 38rem;
-}
-
-.about p {
-  margin: 0 0 1rem;
+  font-size: 0.92rem;
+  margin: 0.2rem 0 1.4rem;
 }
 
 .buttons {
@@ -175,97 +210,113 @@ h3 {
   gap: 0.75rem;
   list-style: none;
   padding: 0;
-  margin: 1.5rem 0 0;
+  margin: 1.4rem 0 0;
 }
 
 .button {
   display: inline-block;
-  padding: 0.55rem 1.1rem;
-  border: 1px solid var(--text);
-  color: var(--text);
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--green);
+  color: var(--green);
   text-decoration: none;
-  font-size: 0.92rem;
-  font-weight: 600;
+  text-transform: lowercase;
+  font-size: 0.88rem;
 }
 
 .button:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  background: var(--green);
+  color: var(--bg);
 }
 
 .button.primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-text);
+  background: var(--green);
+  color: var(--bg);
+  font-weight: 600;
 }
 
 .button.primary:hover {
-  filter: brightness(1.12);
-  color: var(--accent-text);
+  background: var(--bright);
+  border-color: var(--bright);
 }
 
-/* Sections */
+/* Sections: headings written like Markdown */
 section {
   scroll-margin-top: 1rem;
 }
 
 main h2 {
-  font-family: var(--sans);
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin: 4.5rem 0 1.2rem;
+  font-size: 1.05rem;
+  color: var(--green);
+  text-transform: lowercase;
+  margin: 3.5rem 0 1rem;
+}
+
+main h2::before {
+  content: '## ' / '';
 }
 
 .meta {
   color: var(--muted);
-  font-size: 0.95rem;
-  margin: 0.15rem 0 0.4rem;
+  font-size: 0.92rem;
+  margin: 0.1rem 0 0.3rem;
 }
 
-/* CV-style rows: the date or label in the margin, the content beside it */
-.entries,
-.skills {
+.entries {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
 .entry {
+  padding: 1rem 0;
+  border-top: 1px dashed var(--line);
+}
+
+.entry h3 {
+  font-size: 1.02rem;
+  color: var(--bright);
+  margin: 0.1rem 0 0;
+}
+
+.entry p {
+  margin: 0.2rem 0 0;
+}
+
+.when {
+  color: var(--amber);
+  font-size: 0.88rem;
+}
+
+/* Skills: written like a config file */
+.skills {
+  margin: 0;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--window);
+}
+
+.skills div {
   display: grid;
-  gap: 0.2rem 2rem;
   grid-template-columns: minmax(0, 1fr);
-  padding: 1.2rem 0;
-  border-top: 1px solid var(--rule);
+  gap: 0 1rem;
+  padding: 0.25rem 0;
 }
 
 @media (min-width: 44rem) {
-  .entry {
+  .skills div {
     grid-template-columns: 11rem minmax(0, 1fr);
   }
 }
 
-.entry h3 {
-  margin: 0;
-}
-
-.entry p {
-  margin: 0.25rem 0 0;
-}
-
-.when {
-  margin: 0;
-  color: var(--faint);
-  font-size: 0.9rem;
-  font-variant-numeric: tabular-nums;
-  padding-top: 0.2rem;
-}
-
 .skills dt {
-  font-weight: 600;
-  color: var(--text);
+  color: var(--green);
+  text-transform: lowercase;
+}
+
+.skills dt::after {
+  content: ':' / '';
+  color: var(--muted);
 }
 
 .skills dd {
@@ -280,37 +331,43 @@ main h2 {
 }
 
 .card {
-  background: var(--surface);
-  border-top: 3px solid var(--accent);
-  padding: 1.1rem 1.25rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--window);
+  padding: 1rem 1.2rem 1.1rem;
 }
 
 .card :is(h2, h3) {
-  font-family: var(--serif);
-  font-weight: 600;
-  font-size: 1.2rem;
-  letter-spacing: normal;
+  font-size: 1rem;
+  color: var(--bright);
   text-transform: none;
-  color: var(--text);
   margin: 0;
 }
 
+.card :is(h2, h3)::before {
+  content: none;
+}
+
 .card :is(h2, h3) a {
-  color: var(--text);
-  text-decoration: none;
+  color: var(--bright);
 }
 
 .card :is(h2, h3) a:hover {
-  color: var(--accent);
-  text-decoration: underline;
+  color: var(--green);
+}
+
+.card .meta {
+  color: var(--amber);
+  font-size: 0.85rem;
 }
 
 .card p {
   margin: 0.35rem 0 0.8rem;
+  font-size: 0.94rem;
 }
 
 .card.placeholder {
-  border-top-style: dashed;
+  border-style: dashed;
 }
 
 .tags {
@@ -320,8 +377,12 @@ main h2 {
   list-style: none;
   padding: 0;
   margin: 0;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--muted);
+}
+
+.tags li::before {
+  content: '#' / '';
 }
 
 .more {
@@ -331,57 +392,66 @@ main h2 {
 /* Projects index and project pages */
 .page-intro,
 .prose {
-  padding: 3.5rem 0 1rem;
+  padding: 2.5rem 0 1rem;
 }
 
 .page-intro h1,
 .prose h1 {
-  font-family: var(--serif);
-  font-weight: 600;
-  font-size: clamp(2.2rem, 6vw, 3rem);
-  margin: 0 0 0.4rem;
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  color: var(--bright);
+  margin: 0.6rem 0 0.3rem;
 }
 
-.page-intro > p {
+.page-intro > p:not(.prompt) {
   color: var(--muted);
   margin: 0 0 2rem;
 }
 
 .prose {
-  max-width: 40rem;
+  max-width: 46rem;
 }
 
 .prose h2 {
-  font-family: var(--serif);
-  font-size: 1.35rem;
-  font-weight: 600;
-  letter-spacing: normal;
+  font-size: 1.02rem;
   text-transform: none;
-  color: var(--text);
-  margin: 2.2rem 0 0.5rem;
+  margin: 2rem 0 0.4rem;
 }
 
 .prose .tags {
   margin-bottom: 1.5rem;
 }
 
+.prose em {
+  color: var(--muted);
+}
+
 .back {
   display: inline-block;
-  margin-bottom: 1.5rem;
-  font-size: 0.95rem;
+  margin-top: 1rem;
+  font-size: 0.92rem;
 }
 
 /* Footer */
 .site-footer {
-  margin-top: 5rem;
+  margin-top: 4.5rem;
   padding-block: 1.5rem 2.5rem;
-  border-top: 1px solid var(--rule);
-  color: var(--faint);
-  font-size: 0.9rem;
+  border-top: 1px dashed var(--line);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 36rem) {
+  .screen {
+    padding: 1.2rem 1.1rem 1.4rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .cursor {
+    animation: none;
   }
 }

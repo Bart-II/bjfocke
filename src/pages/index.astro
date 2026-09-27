@@ -9,24 +9,41 @@ const featured = (await getCollection('projects', (p) => p.data.featured)).sort(
   (a, b) => a.data.order - b.data.order,
 );
 const [firstCv, ...otherCvs] = profile.cv;
+
+const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+
+// Writes "Jul 2023 – Apr 2024" as "2023-07 → 2024-04"; bare years stay as they are.
+function isoPeriod(period: string): string {
+  return period
+    .split(/\s*[–-]\s*/)
+    .map((part) => {
+      const [a, b] = part.trim().split(/\s+/);
+      if (!b) return a;
+      const m = months.indexOf(a.slice(0, 3).toLowerCase());
+      return m < 0 ? part : `${b}-${String(m + 1).padStart(2, '0')}`;
+    })
+    .join(' → ');
+}
 ---
 
 <Base>
-  <section class="hero" id="about">
-    <h1>{profile.name}</h1>
-    <p class="lede">{profile.headline}</p>
-    <p class="sub">{profile.subheadline} · {profile.location}</p>
-    <div class="about">
+  <section class="terminal hero" id="about">
+    <p class="titlebar" aria-hidden="true"><span class="dots"></span>bart@voorschoten: ~</p>
+    <div class="screen">
+      <p class="prompt" aria-hidden="true">whoami</p>
+      <h1>{profile.name}<span class="cursor" aria-hidden="true"></span></h1>
+      <p class="lede">{profile.headline}</p>
+      <p class="sub">{profile.subheadline} · {profile.location}</p>
       {profile.about.map((paragraph) => <p>{paragraph}</p>)}
+      <ul class="buttons">
+        <li><a class="button primary" href={`${base}/${firstCv.file}`}>Download {firstCv.label}</a></li>
+        {otherCvs.map((cv) => (
+          <li><a class="button" href={`${base}/${cv.file}`}>{cv.label}</a></li>
+        ))}
+        <li><a class="button" href={profile.links.linkedin} rel="me noopener">LinkedIn</a></li>
+        <li><a class="button" href={profile.links.github} rel="me noopener">GitHub</a></li>
+      </ul>
     </div>
-    <ul class="buttons">
-      <li><a class="button primary" href={`${base}/${firstCv.file}`}>Download {firstCv.label}</a></li>
-      {otherCvs.map((cv) => (
-        <li><a class="button" href={`${base}/${cv.file}`}>{cv.label}</a></li>
-      ))}
-      <li><a class="button" href={profile.links.linkedin} rel="me noopener">LinkedIn</a></li>
-      <li><a class="button" href={profile.links.github} rel="me noopener">GitHub</a></li>
-    </ul>
   </section>
 
   <section id="experience">
@@ -34,12 +51,10 @@ const [firstCv, ...otherCvs] = profile.cv;
     <ol class="entries">
       {experience.map((role) => (
         <li class="entry">
-          <p class="when">{role.period}</p>
-          <div>
-            <h3>{role.title}</h3>
-            <p class="meta">{role.organisation}{role.location && ` · ${role.location}`}</p>
-            <p>{role.summary}</p>
-          </div>
+          <p class="when">{isoPeriod(role.period)}</p>
+          <h3>{role.title}</h3>
+          <p class="meta">{role.organisation}{role.location && ` · ${role.location}`}</p>
+          <p>{role.summary}</p>
         </li>
       ))}
     </ol>
@@ -58,12 +73,10 @@ const [firstCv, ...otherCvs] = profile.cv;
     <ol class="entries">
       {education.map((study) => (
         <li class="entry">
-          <p class="when">{study.period}</p>
-          <div>
-            <h3>{study.degree}</h3>
-            <p class="meta">{study.institution}</p>
-            {study.summary && <p>{study.summary}</p>}
-          </div>
+          <p class="when">{isoPeriod(study.period)}</p>
+          <h3>{study.degree}</h3>
+          <p class="meta">{study.institution}</p>
+          {study.summary && <p>{study.summary}</p>}
         </li>
       ))}
     </ol>
@@ -73,14 +86,14 @@ const [firstCv, ...otherCvs] = profile.cv;
     <h2>Skills</h2>
     <dl class="skills">
       {skills.map((group) => (
-        <div class="entry">
-          <dt class="when">{group.group}</dt>
-          <dd>{group.items.join(' · ')}</dd>
+        <div>
+          <dt>{group.group}</dt>
+          <dd>{group.items.join(', ')}</dd>
         </div>
       ))}
-      <div class="entry">
-        <dt class="when">Languages</dt>
-        <dd>{languages.map((l) => `${l.language} (${l.level.toLowerCase()})`).join(' · ')}</dd>
+      <div>
+        <dt>Languages</dt>
+        <dd>{languages.map((l) => `${l.language} (${l.level.toLowerCase()})`).join(', ')}</dd>
       </div>
     </dl>
   </section>
