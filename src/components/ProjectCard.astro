@@ -1,0 +1,20 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const { title, summary, period, tags, placeholder } = project.data;
+---
+
+<article class:list={['card', { placeholder }]}>
+  <h3><a href={`${base}/projects/${project.id}/`}>{title}</a></h3>
+  {period && <p class="meta">{period}</p>}
+  <p>{summary}</p>
+  <ul class="tags">
+    {tags.map((tag: string) => <li>{tag}</li>)}
+  </ul>
+</article>

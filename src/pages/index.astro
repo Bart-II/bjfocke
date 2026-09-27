@@ -1,0 +1,104 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { profile, experience, education, skills, languages, interests } from '../data/resume';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const featured = (await getCollection('projects', (p) => p.data.featured)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<Base>
+  <section class="hero" id="about">
+    <h1>{profile.name}</h1>
+    <p class="headline">{profile.headline}</p>
+    <p class="sub">{profile.subheadline} · {profile.location}</p>
+    {profile.about.map((paragraph) => <p>{paragraph}</p>)}
+    <ul class="buttons">
+      {profile.cv.map((cv) => (
+        <li><a class="button primary" href={`${base}/${cv.file}`}>Download {cv.label}</a></li>
+      ))}
+      <li><a class="button" href={profile.links.linkedin} rel="me noopener">LinkedIn</a></li>
+      <li><a class="button" href={profile.links.github} rel="me noopener">GitHub</a></li>
+    </ul>
+  </section>
+
+  <section id="experience">
+    <h2>Experience</h2>
+    <ol class="timeline">
+      {experience.map((role) => (
+        <li>
+          <h3>{role.title}</h3>
+          <p class="meta">
+            {role.organisation} · {role.period}{role.location && ` · ${role.location}`}
+          </p>
+          <p>{role.summary}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section id="projects">
+    <h2>Featured projects</h2>
+    <div class="cards">
+      {featured.map((project) => <ProjectCard project={project} />)}
+    </div>
+    <p class="more"><a href={`${base}/projects/`}>All projects →</a></p>
+  </section>
+
+  <section id="education">
+    <h2>Education</h2>
+    <ol class="timeline">
+      {education.map((study) => (
+        <li>
+          <h3>{study.degree}</h3>
+          <p class="meta">{study.institution} · {study.period}</p>
+          {study.summary && <p>{study.summary}</p>}
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section id="skills">
+    <h2>Skills</h2>
+    <div class="skill-groups">
+      {skills.map((group) => (
+        <div>
+          <h3>{group.group}</h3>
+          <ul class="tags">
+            {group.items.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+      ))}
+    </div>
+    <ul class="languages">
+      {languages.map((l) => (
+        <li>{l.language} <span>({l.level})</span></li>
+      ))}
+    </ul>
+  </section>
+
+  <section id="interests">
+    <h2>Interests</h2>
+    <div class="cards">
+      {interests.map((interest) => (
+        <article class="card">
+          <h3>{interest.title}</h3>
+          <p>{interest.text}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>The best way to reach me is through LinkedIn.</p>
+    <ul class="buttons">
+      {profile.links.email && <li><a class="button primary" href={profile.links.email}>Email</a></li>}
+      <li><a class="button" href={profile.links.linkedin} rel="me noopener">LinkedIn</a></li>
+      <li><a class="button" href={profile.links.github} rel="me noopener">GitHub</a></li>
+    </ul>
+  </section>
+</Base>

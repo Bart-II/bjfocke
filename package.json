@@ -1,0 +1,20 @@
+{
+  "name": "bjfocke",
+  "version": "1.0.0",
+  "description": "Personal website of Bart Fokke",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bart-II/bjfocke.git"
+  },
+  "homepage": "https://github.com/Bart-II/bjfocke#readme",
+  "dependencies": {
+    "astro": "^7.3.5"
+  },
+  "type": "module",
+  "private": true
+}

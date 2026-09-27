@@ -1,0 +1,5 @@
+# Security contact for this personal website.
+Contact: https://www.linkedin.com/in/bart-fokke-96167b1b9
+Expires: 2027-09-27T00:00:00.000Z
+Preferred-Languages: en, nl
+Canonical: https://bart-ii.github.io/bjfocke/.well-known/security.txt
