@@ -4,11 +4,11 @@
 export const profile = {
   name: 'Bart Fokke',
   headline: 'Information Security & Governance',
-  subheadline: 'MSc Computer Science student at the University of Twente',
+  subheadline: 'BSc Information Security · Computer Science graduate studies at the University of Twente',
   location: 'Voorschoten, Zuid-Holland, the Netherlands',
   about: [
     'I work at the intersection of information security, governance and policy. I have built incident response processes for the Dutch government and developed cybersecurity capabilities at the NATO Communications and Information Agency.',
-    'Alongside a background in security I studied European economics, which shapes how I think about risk, regulation and the organisations behind the technology. I am currently completing an MSc in Computer Science at the University of Twente.',
+    'Alongside a background in security I studied European economics, which shapes how I think about risk, regulation and the organisations behind the technology. I later continued with graduate studies in Computer Science at the University of Twente.',
   ],
   links: {
     linkedin: 'https://www.linkedin.com/in/bart-fokke-96167b1b9',
@@ -16,7 +16,10 @@ export const profile = {
     // TODO: add a public contact email, e.g. 'mailto:you@example.com'
     email: '',
   },
-  cv: [{ label: 'CV (Dutch)', file: 'cv-nl.pdf' }],
+  cv: [
+    { label: 'CV (English)', file: 'cv-en.pdf' },
+    { label: 'CV (Dutch)', file: 'cv-nl.pdf' },
+  ],
 };
 
 export interface Role {
@@ -63,9 +66,9 @@ export interface Study {
 export const education: Study[] = [
   {
     institution: 'University of Twente',
-    degree: 'MSc Computer Science',
+    degree: 'MSc Computer Science (not completed)',
     period: '2024 – 2026',
-    summary: 'Pre-master completed in 2025.',
+    summary: 'Completed the pre-master in 2025 and followed MSc coursework. Discontinued in 2026 after relocating.',
   },
   {
     institution: 'University of Amsterdam',
