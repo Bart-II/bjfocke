@@ -41,7 +41,7 @@ const channels = [
       {profile.about.map((paragraph) => <p>{paragraph}</p>)}
       <ul class="buttons">
         {profile.cv.map((cv) => (
-          <li><a class="button primary" href={`${base}/${cv.file}`}>Download {cv.label}</a></li>
+          <li><a class="button primary" href={`${base}/${cv.file}`}><span class="visually-hidden">Download </span>{cv.label}</a></li>
         ))}
         <li><a class="button" href={profile.links.linkedin} rel="me noopener">LinkedIn</a></li>
         <li><a class="button" href={profile.links.github} rel="me noopener">GitHub</a></li>
